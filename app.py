@@ -9,6 +9,7 @@ from pathlib import Path
 import folium
 from streamlit_folium import st_folium
 
+
 st.set_page_config(page_title="AGRO-SENTINEL", page_icon="🌱", layout="wide")
 
 DATA_FILE = Path("agro_sentinel_readings.csv")
