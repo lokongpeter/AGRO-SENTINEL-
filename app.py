@@ -236,6 +236,8 @@ else:
         "measurements. The example screening rules have not been validated for medical or occupational decisions."
     )
 
+app_time = datetime.now(ZoneInfo("Africa/Kampala")).strftime("%A, %d %B %Y — %H:%M EAT")
+
 st.markdown(
     """
     <style>
@@ -254,8 +256,8 @@ st.markdown(
       <h2>Protect the people who feed us</h2>
       <p>Solar-powered environmental monitoring can help field teams recognize heat exposure, plan safer breaks and respond earlier.</p>
     </div>
-    <p><strong>App time:</strong> {datetime.now(ZoneInfo("Africa/Kampala")).strftime("%A, %d %B %Y — %H:%M EAT")}</p>
-    """.format(datetime=datetime, ZoneInfo=ZoneInfo),
+    <p><strong>App time:</strong> __APP_TIME__</p>
+    """.replace("__APP_TIME__", app_time),
     unsafe_allow_html=True,
 )
 
