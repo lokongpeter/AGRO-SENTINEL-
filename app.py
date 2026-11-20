@@ -741,25 +741,9 @@ if not is_public_view:
 
 st.subheader("5. Location map")
 map_df = pd.DataFrame({"lat": [latitude], "lon": [longitude]})
-
-if is_public_view:
-    public_map = folium.Map(location=[latitude, longitude], zoom_start=11)
-    folium.Marker([latitude, longitude], tooltip="Selected location").add_to(public_map)
-    map_selection = st_folium(public_map, height=420, width=None, key="public_location_map")
-    if map_selection and map_selection.get("last_clicked"):
-        clicked = map_selection["last_clicked"]
-        clicked_lat = float(clicked["lat"])
-        clicked_lon = float(clicked["lng"])
-        if abs(clicked_lat - latitude) > 0.00001 or abs(clicked_lon - longitude) > 0.00001:
-            st.session_state.site_lat = clicked_lat
-            st.session_state.site_lon = clicked_lon
-            st.rerun()
-    st.caption("Tap or click a location on the map to update both latitude and longitude.")
-else:
-    st.map(map_df, latitude="lat", longitude="lon", zoom=11)
-    st.caption("Operator map marker. It shows the entered point, not a verified field sensor location.")
-
+st.map(map_df, latitude="lat", longitude="lon", zoom=11)
 st.write(f"Selected location: {latitude:.5f}° latitude, {longitude:.5f}° longitude")
+st.caption("Use the latitude and longitude fields in the sidebar to update the location.")
 
 if not is_public_view:
     st.subheader("6. System status and next integration steps")
