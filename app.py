@@ -64,7 +64,7 @@ def _nasa_value(parameters, parameter_name, hour):
     return None if value == -999 else float(value)
 
 
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=60)
 def fetch_open_meteo_forecast(latitude, longitude):
     """Fetch seven days of hourly forecast estimates for a point in Uganda."""
     url = "https://api.open-meteo.com/v1/forecast"
@@ -239,26 +239,27 @@ else:
 st.markdown(
     """
     <style>
-    .stApp { background: #090d12; }
+    .stApp { background: #ffffff; }
     .agro-hero {
-        background: linear-gradient(135deg, #111827 0%, #1c2a18 60%, #090d12 100%);
-        border: 1px solid #355a35;
+        background: linear-gradient(135deg, #effaf2 0%, #ffffff 70%, #fff8dc 100%);
+        border: 1px solid #90be96;
         border-radius: 18px;
         padding: 1.5rem;
         margin-bottom: 1rem;
     }
-    .agro-hero h2 { color: #f7c948; margin-bottom: 0.25rem; }
-    .agro-hero p { color: #f3f4f6; }
+    .agro-hero h2 { color: #1d4d25; margin-bottom: 0.25rem; }
+    .agro-hero p { color: #263238; }
     </style>
     <div class="agro-hero">
       <h2>Protect the people who feed us</h2>
       <p>Solar-powered environmental monitoring can help field teams recognize heat exposure, plan safer breaks and respond earlier.</p>
     </div>
-    """,
+    <p><strong>App time:</strong> {datetime.now(ZoneInfo("Africa/Kampala")).strftime("%A, %d %B %Y — %H:%M EAT")}</p>
+    """.format(datetime=datetime, ZoneInfo=ZoneInfo),
     unsafe_allow_html=True,
 )
 
-with st.expander("🌾 Why heat preparedness matters", expanded=False):
+with st.expander("🌾 Why heat and sunlight preparedness matters", expanded=False):
     farmer_col, solar_col = st.columns(2)
     with farmer_col:
         st.image(
@@ -278,8 +279,10 @@ with st.expander("🌾 Why heat preparedness matters", expanded=False):
         "converts the readings into explainable risk categories and break-planning prompts."
     )
     st.markdown(
-        "> AGRO-SENTINEL is a planning demonstrator. It does not replace calibrated WBGT instruments, medical guidance "
-        "or qualified occupational-safety decisions."
+        "**Sun and skin-health protection:** shade, protective clothing and time away from direct sunlight can reduce "
+        "unprotected ultraviolet (UV) exposure. Reducing severe or repeated UV exposure over a lifetime may help lower "
+        "skin-cancer risk, but this app cannot remove cancerous cells or claim that sunlight monitoring itself prevents cancer. "
+        "Seek medical advice for suspicious skin changes."
     )
 
 with st.expander("🎬 Project video", expanded=False):
