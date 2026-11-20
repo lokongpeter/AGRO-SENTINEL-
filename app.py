@@ -236,6 +236,111 @@ else:
         "measurements. The example screening rules have not been validated for medical or occupational decisions."
     )
 
+st.markdown(
+    """
+    <style>
+    .stApp { background: #090d12; }
+    .agro-hero {
+        background: linear-gradient(135deg, #111827 0%, #1c2a18 60%, #090d12 100%);
+        border: 1px solid #355a35;
+        border-radius: 18px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .agro-hero h2 { color: #f7c948; margin-bottom: 0.25rem; }
+    .agro-hero p { color: #f3f4f6; }
+    </style>
+    <div class="agro-hero">
+      <h2>Protect the people who feed us</h2>
+      <p>Solar-powered environmental monitoring can help field teams recognize heat exposure, plan safer breaks and respond earlier.</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+with st.expander("🌾 Why heat preparedness matters", expanded=False):
+    farmer_col, solar_col = st.columns(2)
+    with farmer_col:
+        st.image(
+            "https://upload.wikimedia.org/wikipedia/commons/d/d5/Love_and_family_at_work_in_Uganda.jpg",
+            caption="Agricultural work in Uganda — representative open-access photo",
+            use_container_width=True,
+        )
+    with solar_col:
+        st.image(
+            "https://upload.wikimedia.org/wikipedia/commons/8/81/Innovation_Africa_-_solar_panels.jpg",
+            caption="Solar power can support remote monitoring in areas without grid power",
+            use_container_width=True,
+        )
+    st.markdown(
+        "**Solar-powered AGRO-SHIELD:** solar panels charge a battery, which can power a temperature and humidity "
+        "sensor, an ESP32 controller and wireless communication. The station can report measurements, while the app "
+        "converts the readings into explainable risk categories and break-planning prompts."
+    )
+    st.markdown(
+        "> AGRO-SENTINEL is a planning demonstrator. It does not replace calibrated WBGT instruments, medical guidance "
+        "or qualified occupational-safety decisions."
+    )
+
+with st.expander("🎬 Project video", expanded=False):
+    video_url = st.text_input(
+        "Hosted video URL",
+        placeholder="Paste a YouTube or direct MP4 URL",
+        key="agro_video_url",
+        help="Use a YouTube link or an MP4 hosted through GitHub Releases or cloud storage.",
+    )
+    if video_url:
+        st.video(video_url)
+    else:
+        st.info("Add the Peter and Yusuf project video here after hosting or uploading it.")
+
+with st.expander("🎤 2:50 Project presentation script", expanded=False):
+    st.markdown("### AGRO-SENTINEL: Protecting Agricultural Workers Through Predictive Heat-Health Surveillance")
+    st.markdown(
+        "**Opening — 0:00–0:25**\n\n"
+        "Imagine a farmer working under the scorching sun. The temperature is rising, humidity is increasing, "
+        "and the worker is becoming increasingly exposed to heat stress.\n\n"
+        "But what if the worker has no reliable way of knowing when conditions are becoming dangerous or when to take a break? "
+        "This is the problem we are addressing with **AGRO-SENTINEL**."
+    )
+    st.markdown(
+        "**Problem and solution — 0:25–0:55**\n\n"
+        "AGRO-SENTINEL is a proposed digital worker-safety and environmental monitoring platform designed specifically "
+        "for agricultural environments.\n\n"
+        "At its foundation is AGRO-SHIELD, a solar-powered environmental monitoring station intended to collect environmental "
+        "measurements such as air temperature and relative humidity. These measurements feed into our digital platform, where "
+        "they are assessed to identify potentially hazardous heat-exposure conditions."
+    )
+    st.markdown(
+        "**Technology demonstration — 0:55–1:35**\n\n"
+        "Our platform is designed around three major capabilities:\n\n"
+        "1. **Heat-risk assessment:** interprets environmental measurements and provides an explainable risk classification.\n"
+        "2. **Smart Break Planner:** translates environmental risk information into practical work-rest guidance, hydration "
+        "reminders and safety recommendations.\n"
+        "3. **GIS risk mapping:** provides a geographical view of monitoring locations, helping supervisors identify areas "
+        "that may require additional attention."
+    )
+    st.markdown(
+        "**Demonstrate the dashboard — 1:35–2:05**\n\n"
+        "Enter sample readings and show how environmental data enters the platform, how the assessment engine interprets the "
+        "information, and how the system generates corresponding safety recommendations.\n\n"
+        "The objective is to move from simply measuring environmental conditions to supporting informed decisions that protect "
+        "agricultural workers."
+    )
+    st.markdown(
+        "**Innovation and impact — 2:05–2:35**\n\n"
+        "What distinguishes AGRO-SENTINEL is the integration of environmental monitoring, explainable heat-risk assessment, "
+        "geographical risk awareness and practical worker-safety planning within one platform.\n\n"
+        "Our long-term vision is to make proactive heat-health surveillance more accessible to agricultural communities, "
+        "particularly in resource-constrained environments."
+    )
+    st.markdown(
+        "**Closing — 2:35–2:50**\n\n"
+        "We are Peter Lokong and Yusuf, the team behind AGRO-SENTINEL.\n\n"
+        "We believe that protecting agricultural productivity begins with protecting the people who make it possible.\n\n"
+        "**AGRO-SENTINEL: Detect risk. Guide action. Protect workers.**"
+    )
+
 with st.sidebar:
     st.header("Monitoring station")
     st.caption("The dashboard-view switch is for local preview only; it is not a login or access control.")
