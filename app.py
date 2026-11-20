@@ -6,6 +6,8 @@ import math
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
+import folium
+from streamlit_folium import st_folium
 
 st.set_page_config(page_title="AGRO-SENTINEL", page_icon="🌱", layout="wide")
 
@@ -213,12 +215,25 @@ def fetch_forecast_grid(latitude, longitude, spacing_km, forecast_time):
         raise ValueError("No nearby forecast points were available to draw the GIS estimate.")
     return pd.DataFrame(rows)
 
-audience_mode = st.sidebar.radio(
-    "Dashboard view",
-    ["Public / field user", "Project operator"],
-    help="The public view is designed for workers and community members; the operator view contains project controls.",
-)
-is_public_view = audience_mode == "Public / field user"
+operator_requested = "operator" in st.query_params
+is_public_view = not operator_requested
+
+if operator_requested:
+    try:
+        operator_password = st.secrets["operator_password"]
+    except Exception:
+        operator_password = None
+
+    if operator_password:
+        entered_password = st.sidebar.text_input(
+            "Operator password",
+            type="password",
+            key="operator_password_entry",
+        )
+        is_public_view = entered_password != operator_password
+    else:
+        is_public_view = True
+        st.sidebar.warning("Operator access is not configured. Add operator_password to Streamlit secrets.")
 
 if is_public_view:
     st.title("🌱 Local Weather & Heat Preparedness")
@@ -287,68 +302,36 @@ with st.expander("🌾 Why heat and sunlight preparedness matters", expanded=Fal
         "Seek medical advice for suspicious skin changes."
     )
 
-with st.expander("🎬 Project video", expanded=False):
-    video_url = st.text_input(
-        "Hosted video URL",
-        placeholder="Paste a YouTube or direct MP4 URL",
-        key="agro_video_url",
-        help="Use a YouTube link or an MP4 hosted through GitHub Releases or cloud storage.",
-    )
-    if video_url:
-        st.video(video_url)
-    else:
-        st.info("Add the Peter and Yusuf project video here after hosting or uploading it.")
+if not is_public_view:
+    with st.expander("🎬 Project video", expanded=False):
+        video_url = st.text_input(
+            "Hosted video URL",
+            placeholder="Paste a YouTube or direct MP4 URL",
+            key="agro_video_url",
+            help="Use a YouTube link or an MP4 hosted through GitHub Releases or cloud storage.",
+        )
+        if video_url:
+            st.video(video_url)
+        else:
+            st.info("Add the project video here after hosting or uploading it.")
 
-with st.expander("🎤 2:50 Project presentation script", expanded=False):
-    st.markdown("### AGRO-SENTINEL: Protecting Agricultural Workers Through Predictive Heat-Health Surveillance")
-    st.markdown(
-        "**Opening — 0:00–0:25**\n\n"
-        "Imagine a farmer working under the scorching sun. The temperature is rising, humidity is increasing, "
-        "and the worker is becoming increasingly exposed to heat stress.\n\n"
-        "But what if the worker has no reliable way of knowing when conditions are becoming dangerous or when to take a break? "
-        "This is the problem we are addressing with **AGRO-SENTINEL**."
-    )
-    st.markdown(
-        "**Problem and solution — 0:25–0:55**\n\n"
-        "AGRO-SENTINEL is a proposed digital worker-safety and environmental monitoring platform designed specifically "
-        "for agricultural environments.\n\n"
-        "At its foundation is AGRO-SHIELD, a solar-powered environmental monitoring station intended to collect environmental "
-        "measurements such as air temperature and relative humidity. These measurements feed into our digital platform, where "
-        "they are assessed to identify potentially hazardous heat-exposure conditions."
-    )
-    st.markdown(
-        "**Technology demonstration — 0:55–1:35**\n\n"
-        "Our platform is designed around three major capabilities:\n\n"
-        "1. **Heat-risk assessment:** interprets environmental measurements and provides an explainable risk classification.\n"
-        "2. **Smart Break Planner:** translates environmental risk information into practical work-rest guidance, hydration "
-        "reminders and safety recommendations.\n"
-        "3. **GIS risk mapping:** provides a geographical view of monitoring locations, helping supervisors identify areas "
-        "that may require additional attention."
-    )
-    st.markdown(
-        "**Demonstrate the dashboard — 1:35–2:05**\n\n"
-        "Enter sample readings and show how environmental data enters the platform, how the assessment engine interprets the "
-        "information, and how the system generates corresponding safety recommendations.\n\n"
-        "The objective is to move from simply measuring environmental conditions to supporting informed decisions that protect "
-        "agricultural workers."
-    )
-    st.markdown(
-        "**Innovation and impact — 2:05–2:35**\n\n"
-        "What distinguishes AGRO-SENTINEL is the integration of environmental monitoring, explainable heat-risk assessment, "
-        "geographical risk awareness and practical worker-safety planning within one platform.\n\n"
-        "Our long-term vision is to make proactive heat-health surveillance more accessible to agricultural communities, "
-        "particularly in resource-constrained environments."
-    )
-    st.markdown(
-        "**Closing — 2:35–2:50**\n\n"
-        "We are Peter Lokong and Yusuf, the team behind AGRO-SENTINEL.\n\n"
-        "We believe that protecting agricultural productivity begins with protecting the people who make it possible.\n\n"
-        "**AGRO-SENTINEL: Detect risk. Guide action. Protect workers.**"
-    )
+if not is_public_view:
+    with st.expander("🎤 2:50 Project presentation script", expanded=False):
+        st.markdown("### AGRO-SENTINEL: Protecting Agricultural Workers Through Predictive Heat-Health Surveillance")
+        st.markdown(
+            "**Opening — 0:00–0:25:** Imagine a farmer working under the scorching sun. Rising temperature and humidity "
+            "can increase heat stress, while the worker may have no reliable warning or break guidance.\n\n"
+            "**Problem and solution — 0:25–0:55:** AGRO-SENTINEL is a proposed digital worker-safety and environmental "
+            "monitoring platform for agriculture. AGRO-SHIELD is intended to collect temperature and humidity through solar-powered sensors.\n\n"
+            "**Capabilities — 0:55–1:35:** explainable heat-risk assessment, practical break-planning prompts and GIS awareness.\n\n"
+            "**Demonstration — 1:35–2:05:** enter or retrieve readings and show how the platform explains the resulting category and safety prompts.\n\n"
+            "**Impact — 2:05–2:35:** combine monitoring, explainable assessment and worker-safety planning without claiming validated medical prediction.\n\n"
+            "**Closing — 2:35–2:50:** We are Peter Lokong and Yusuf. Protecting agricultural productivity begins with protecting the people who make it possible."
+        )
 
 with st.sidebar:
     st.header("Monitoring station")
-    st.caption("The dashboard-view switch is for local preview only; it is not a login or access control.")
+    st.caption("Choose a location and weather information type.")
     if is_public_view:
         if "site_lat" not in st.session_state:
             st.session_state.site_lat = 0.3476
@@ -755,11 +738,27 @@ if not is_public_view:
     else:
         st.info("No readings saved yet. Save a reading to create the local CSV log.")
 
-st.subheader("5. GIS station marker")
+st.subheader("5. Location map")
 map_df = pd.DataFrame({"lat": [latitude], "lon": [longitude]})
-st.write(f"Map marker: {latitude:.5f}° latitude, {longitude:.5f}° longitude")
-st.map(map_df, latitude="lat", longitude="lon", zoom=11)
-st.caption("Change the latitude and longitude in the sidebar to move the marker. It shows the entered point, not a verified weather-station location.")
+
+if is_public_view:
+    public_map = folium.Map(location=[latitude, longitude], zoom_start=11)
+    folium.Marker([latitude, longitude], tooltip="Selected location").add_to(public_map)
+    map_selection = st_folium(public_map, height=420, width=None, key="public_location_map")
+    if map_selection and map_selection.get("last_clicked"):
+        clicked = map_selection["last_clicked"]
+        clicked_lat = float(clicked["lat"])
+        clicked_lon = float(clicked["lng"])
+        if abs(clicked_lat - latitude) > 0.00001 or abs(clicked_lon - longitude) > 0.00001:
+            st.session_state.site_lat = clicked_lat
+            st.session_state.site_lon = clicked_lon
+            st.rerun()
+    st.caption("Tap or click a location on the map to update both latitude and longitude.")
+else:
+    st.map(map_df, latitude="lat", longitude="lon", zoom=11)
+    st.caption("Operator map marker. It shows the entered point, not a verified field sensor location.")
+
+st.write(f"Selected location: {latitude:.5f}° latitude, {longitude:.5f}° longitude")
 
 if not is_public_view:
     st.subheader("6. System status and next integration steps")
