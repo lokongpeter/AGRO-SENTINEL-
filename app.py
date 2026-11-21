@@ -237,6 +237,121 @@ if operator_requested:
         st.sidebar.warning("Operator access is not configured. Add operator_password to Streamlit secrets.")
 
 if is_public_view:
+    page_options = ["Home", "Dashboard", "How it works", "Features", "About", "Safety & limitations"]
+else:
+    page_options = ["Home", "Dashboard", "How it works", "Features", "About", "Safety & limitations", "Operator demo"]
+
+with st.sidebar:
+    st.header("AGRO-SENTINEL")
+    app_page = st.radio("Explore", page_options, key="app_page")
+
+if app_page == "Home":
+    st.title("🌱 AGRO-SENTINEL")
+    st.caption("Protecting agricultural workers through weather awareness and environmental monitoring")
+    st.markdown(
+        """
+        <div class="agro-hero">
+          <h2>Weather intelligence for safer field decisions</h2>
+          <p>Explore local forecasts, historical weather, solar-radiation estimates and explainable heat-screening prompts.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    card_one, card_two, card_three = st.columns(3)
+    card_one.metric("1", "Choose a location")
+    card_two.metric("2", "Explore the weather")
+    card_three.metric("3", "Plan safer breaks")
+
+    st.subheader("What can this app do?")
+    left, right = st.columns(2)
+    with left:
+        st.markdown("**For workers and field planners**")
+        st.write("View upcoming temperature, humidity, rain and sunlight estimates before planning outdoor work.")
+        st.markdown("**For project teams**")
+        st.write("Demonstrate monitoring, GIS awareness, station uploads and locally saved data records.")
+    with right:
+        st.markdown("**For researchers and operators**")
+        st.write("Compare manual, uploaded, forecast, archive and NASA POWER data sources.")
+        st.markdown("**Clear safety boundaries**")
+        st.write("The app explains planning prompts but never claims to diagnose illness or issue certified warnings.")
+
+    st.warning("Forecasts do not predict whether a person will become ill. Confirm field conditions with an on-site instrument and local workplace guidance.")
+    st.info("Use **Dashboard** to explore live forecast and weather-history views.")
+    st.stop()
+
+if app_page == "How it works":
+    st.title("How AGRO-SENTINEL works")
+    st.caption("A transparent journey from environmental data to a precautionary planning prompt")
+
+    step_one, step_two, step_three, step_four = st.columns(4)
+    step_one.info("**1. Select**\n\nChoose a Uganda location or enter station coordinates.")
+    step_two.info("**2. Retrieve**\n\nLoad a forecast, archive estimate, NASA series or uploaded station CSV.")
+    step_three.info("**3. Screen**\n\nCompare temperature and humidity with clearly labelled example thresholds.")
+    step_four.info("**4. Plan**\n\nUse shade, water and break prompts while following approved local procedures.")
+
+    st.subheader("The planned sensor-to-dashboard concept")
+    st.markdown("`Temperature and humidity sensor` → `ESP32 controller` → `solar battery and wireless link` → `timestamped data` → `dashboard`")
+    st.markdown("At present, no physical sensor or ESP32 is connected. The current app demonstrates the complete interface with forecasts and sample or uploaded data.")
+
+    with st.expander("What is calculated today?"):
+        st.markdown("The present heat prompt uses air temperature and relative humidity only. Heavy work adds an explanatory caution, but it is not a physiological or WBGT model.")
+    st.stop()
+
+if app_page == "Features":
+    st.title("App features")
+    feature_left, feature_right = st.columns(2)
+    with feature_left:
+        st.markdown("### 🌦️ Weather information")
+        st.write("Seven-day hourly forecasts, past reanalysis and daily weather summaries.")
+        st.markdown("### ☀️ Solar and radiation views")
+        st.write("NASA historical radiation estimates and forecast radiation mix charts.")
+        st.markdown("### 📍 Location awareness")
+        st.write("Town search, manual coordinates and a simple map marker.")
+    with feature_right:
+        st.markdown("### 🧪 Transparent screening")
+        st.write("Temperature and humidity rules are visible and clearly labelled as illustrative.")
+        st.markdown("### 💾 Station data")
+        st.write("Operator mode supports manual readings, samples, CSV uploads and a local CSV log.")
+        st.markdown("### 🗺️ Demonstration GIS")
+        st.write("A coarse nearby-grid map helps explain possible model-data variation; it is not validated risk mapping.")
+    st.stop()
+
+if app_page == "About":
+    st.title("About AGRO-SENTINEL")
+    st.markdown("AGRO-SENTINEL is a proposed worker-safety and environmental monitoring demonstrator for agricultural field teams in Uganda.")
+    st.markdown("The name brings together **AGRO** for agriculture and **SENTINEL** for an early-awareness monitoring concept.")
+
+    mission, scope = st.columns(2)
+    with mission:
+        st.subheader("Mission")
+        st.write("Make local weather and heat-preparedness information easier to understand and use for planning safer outdoor work.")
+    with scope:
+        st.subheader("Project scope")
+        st.write("Software demonstrator, transparent screening prompts, weather integration, CSV workflows and an integration roadmap for AGRO-SHIELD hardware.")
+
+    st.subheader("Project team")
+    st.write("Peter Lokong and Yusuf")
+    st.caption("Update this section with full names, roles, institution and project acknowledgements before publication.")
+    st.stop()
+
+if app_page == "Safety & limitations":
+    st.title("Safety and limitations")
+    st.error("This app is not a medical diagnostic tool, official warning service or certified work-rest schedule.")
+    st.markdown("- No physical sensors or ESP32 devices are connected in this version.")
+    st.markdown("- Forecasts, reanalysis and NASA data are estimates rather than direct local measurements.")
+    st.markdown("- Example thresholds have not been validated for occupational decisions.")
+    st.markdown("- WBGT is not calculated; temperature and humidity alone are insufficient for certified heat-stress assessment.")
+    st.markdown("- Continue approved workplace guidance, on-site monitoring, worker observation and emergency procedures.")
+    st.stop()
+
+if app_page == "Operator demo":
+    st.title("Operator demonstration mode")
+    st.caption("Hardware, station, CSV and presentation functions")
+    st.info("Use **Dashboard** to open the operator data tools. This mode is disabled for public visitors unless operator access is configured.")
+    st.markdown("Available in the dashboard: manual readings, sample readings, station CSV uploads, NASA data, forecast and archive views, local saving and data export.")
+    st.stop()
+
+if is_public_view:
     st.title("🌱 Local Weather & Heat Preparedness")
     st.caption("A simple local forecast and weather-history view for planning and awareness.")
     st.warning(
